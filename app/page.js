@@ -74,13 +74,13 @@ function PushNotificationManager() {
       return;
     }
 
-    console.log("HERE.....1")
-  
+    console.log("HERE.....1");
+
     try {
       await sendNotification(message);
       setMessage("");
     } catch (error) {
-      console.log("THATS")
+      console.log("THATS");
       console.error("Failed to send notification:", error);
     }
   }
@@ -115,37 +115,50 @@ function PushNotificationManager() {
 }
 
 function InstallPrompt() {
-  const [isIOS, setIsIOS] = useState(false);
-  const [isStandalone, setIsStandalone] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [isInstallPromptVisible, setIsInstallPromptVisible] = useState(false);
 
   useEffect(() => {
-    setIsIOS(/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream);
+    const handleBeforeInstallPrompt = (e) => {
+      e.preventDefault(); // Prevent the mini-infobar from appearing on mobile
+      setDeferredPrompt(e); // Store the event for later
+      setIsInstallPromptVisible(true); // Show custom install prompt UI
+    };
 
-    setIsStandalone(window.matchMedia("(display-mode: standalone)").matches);
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+
+    return () => {
+      window.removeEventListener(
+        "beforeinstallprompt",
+        handleBeforeInstallPrompt
+      );
+    };
   }, []);
 
-  if (isStandalone) {
-    return null; // Don't show install button if already installed
-  }
+  const handleInstallClick = () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt(); // Show the browser install prompt
+      deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === "accepted") {
+          console.log("User accepted the install prompt");
+        } else {
+          console.log("User dismissed the install prompt");
+        }
+        setDeferredPrompt(null); // Clear the deferred prompt
+        setIsInstallPromptVisible(false); // Hide the install button
+      });
+    }
+  };
 
   return (
     <div>
       <h3>Install App</h3>
-      <button>Add to Home Screen</button>
-      {isIOS && (
-        <p>
-          To install this app on your iOS device, tap the share button
-          <span role="img" aria-label="share icon">
-            {" "}
-            ⎋{" "}
-          </span>
-          and then Add to Home Screen
-          <span role="img" aria-label="plus icon">
-            {" "}
-            ➕{" "}
-          </span>
-          .
-        </p>
+      {isInstallPromptVisible && (
+        <button
+          onClick={handleInstallClick}
+        >
+          Install App
+        </button>
       )}
     </div>
   );
