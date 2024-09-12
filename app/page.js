@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { subscribeUser, unsubscribeUser, sendNotification } from "./actions";
+import styles from "./page.module.css";
 
 function urlBase64ToUint8Array(base64String) {
   console.log(base64String, "here...");
@@ -9,8 +10,6 @@ function urlBase64ToUint8Array(base64String) {
   const base64 = (base64String + padding)
     .replace(/-/g, "+") // No need to escape the hyphen
     .replace(/_/g, "/");
-
-  console.log(base64);
 
   const rawData = window.atob(base64);
   const outputArray = new Uint8Array(rawData.length);
@@ -90,24 +89,31 @@ function PushNotificationManager() {
   }
 
   return (
-    <div>
+    <div className={styles.notifications}>
       <h3>Push Notifications</h3>
       {subscription ? (
         <>
           <p>You are subscribed to push notifications.</p>
-          <button onClick={unsubscribeFromPush}>Unsubscribe</button>
+          <button className={styles.btn} onClick={unsubscribeFromPush}>
+            Unsubscribe
+          </button>
           <input
+            className={styles.input}
             type="text"
             placeholder="Enter notification message"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
           />
-          <button onClick={sendTestNotification}>Send Test</button>
+          <button className={styles.btn} onClick={sendTestNotification}>
+            Send Test
+          </button>
         </>
       ) : (
         <>
           <p>You are not subscribed to push notifications.</p>
-          <button onClick={subscribeToPush}>Subscribe</button>
+          <button className={styles.button} onClick={subscribeToPush}>
+            Subscribe
+          </button>
         </>
       )}
     </div>
@@ -151,22 +157,20 @@ function InstallPrompt() {
   };
 
   return (
-    <div>
-      <h3>Install App</h3>
-      {isInstallPromptVisible && (
-        <button
-          onClick={handleInstallClick}
-        >
-          Install App
-        </button>
-      )}
+    <div className={styles.installApp}>
+      {isInstallPromptVisible ||
+        (true && (
+          <button className={styles.button} onClick={handleInstallClick}>
+            Install App
+          </button>
+        ))}
     </div>
   );
 }
 
 export default function Page() {
   return (
-    <div>
+    <div className={styles.container}>
       <PushNotificationManager />
       <InstallPrompt />
     </div>
