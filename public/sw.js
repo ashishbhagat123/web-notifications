@@ -1,3 +1,12 @@
+self.addEventListener('install', function(){
+  console.log("installing")
+  self.skipWaiting()
+})
+
+self.addEventListener('activate', function(){
+  console.log("activating")
+})
+
 self.addEventListener("push", function (event) {
   if (event.data) {
     let data = JSON.parse(event.data?.text());
@@ -23,5 +32,5 @@ self.addEventListener("push", function (event) {
 self.addEventListener("notificationclick", function (event) {
   console.log("Notification click received.");
   event.notification.close();
-  event.waitUntil(clients.openWindow("https://web-notifictions.netlify.app"));
+  event.waitUntil(clients.openWindow("<https://web-notifictions.netlify.app>"));
 });
