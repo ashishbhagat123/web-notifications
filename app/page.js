@@ -26,12 +26,26 @@ function PushNotificationManager() {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    if ("serviceWorker" in navigator) {
-      console.log("here....ser");
+    main();
+    
+  }, ["PushManager" in window, "serviceWorker" in navigator]);
+
+  const main = async () => {
+    check();
+    Notification.requestPermission().then(async function () {
+      await registerServiceWorker();
       setIsSupported(true);
-      registerServiceWorker();
+    });
+  };
+
+  const check = () => {
+    if (!("serviceWorker" in navigator)) {
+      throw new Error("No Service Worker support!");
     }
-  }, []);
+    if (!("PushManager" in window)) {
+      throw new Error("No Push API Support!");
+    }
+  };
 
   async function registerServiceWorker() {
     try {
@@ -162,12 +176,11 @@ function InstallPrompt() {
 
   return (
     <div className={styles.installApp}>
-      {isInstallPromptVisible 
-        && (
-          <button className={styles.button} onClick={handleInstallClick}>
-            Install App
-          </button>
-        )}
+      {isInstallPromptVisible && (
+        <button className={styles.button} onClick={handleInstallClick}>
+          Install App
+        </button>
+      )}
     </div>
   );
 }
