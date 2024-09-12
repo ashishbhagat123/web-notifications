@@ -158,12 +158,12 @@ function InstallPrompt() {
 
   return (
     <div className={styles.installApp}>
-      {isInstallPromptVisible ||
-        (true && (
+      {isInstallPromptVisible 
+        && (
           <button className={styles.button} onClick={handleInstallClick}>
             Install App
           </button>
-        ))}
+        )}
     </div>
   );
 }
