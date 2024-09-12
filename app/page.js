@@ -26,7 +26,7 @@ function PushNotificationManager() {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    if ("serviceWorker" in navigator && "PushManager" in window) {
+    if ("serviceWorker" in navigator) {
       console.log("here....ser");
       setIsSupported(true);
       registerServiceWorker();
@@ -34,13 +34,17 @@ function PushNotificationManager() {
   }, []);
 
   async function registerServiceWorker() {
-    const registration = await navigator.serviceWorker.register("/sw.js", {
-      scope: "/",
-      updateViaCache: "none",
-    });
-    console.log(registration, "here...");
-    const sub = await registration.pushManager.getSubscription();
-    setSubscription(sub);
+    try {
+      const registration = await navigator.serviceWorker.register("/sw.js", {
+        scope: "/",
+        updateViaCache: "none",
+      });
+      console.log(registration, "here...");
+      const sub = await registration?.pushManager?.getSubscription();
+      setSubscription(sub);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async function subscribeToPush() {
