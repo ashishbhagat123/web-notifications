@@ -28,7 +28,7 @@ function PushNotificationManager() {
   useEffect(() => {
     main();
     
-  }, ["PushManager" in window, "serviceWorker" in navigator]);
+  }, []);
 
   const main = async () => {
     check();
