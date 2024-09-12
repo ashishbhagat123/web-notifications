@@ -5,6 +5,8 @@
   justify-content: center;
   min-height: 100dvh;
   gap: 20px;
+    width: 100vw;
+  background-color: black;
 }
 
 .notifications {
